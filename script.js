@@ -4,6 +4,7 @@ let humanScore = 0
 let getComputerChoice=null
 let getHumanChoice=null
 let winner=null
+let roundNumber = 0
 const rules_matrix = {
     "paper":"rock",
     "rock":"scissors",
@@ -30,8 +31,10 @@ function comp_choice(){
 It must also sum up the total winner score (the sum of the score of each player from all the games played). At the end it logs 
 a message announcing the winner and why dis he won (ej. "paper beats rock ") */
 
-function playround (human_choice,computer_choice){
+function playround (human_choice){
     human_choice=human_choice.toLowerCase()
+    let computer_choice = comp_choice()
+
     if (human_choice===computer_choice) {
         winner="tie"
     } else {
@@ -39,40 +42,69 @@ function playround (human_choice,computer_choice){
         
     }
     
-    winner==="human" ? result= `${human_choice} beats ${computer_choice}` : result=`${computer_choice} beats ${human_choice}`
-    winner==="tie" ? console.log("I`s a tie ") : console.log(`${winner} wins : ${result}`)
+    winner==="human" ? result = `${human_choice} beats ${computer_choice}` : 
+    result=`${computer_choice} beats ${human_choice}`
+
+    let htmlLog = document.querySelector('#log')
+
+    winner==="tie" ? htmlLog.textContent = ("I`s a tie ") : 
+    htmlLog.textContent = (`${winner} wins : ${result}`)
+
+    countScore(winner)
+
+
     return winner
 }
-/*Function that plays five rounds and gets the total score of these rounds*/
-function playgame() {
-    humanScore = 0
-    computerScore = 0
 
-    for (let i = 0; i<5;i++) {
-        console.log(" ")
-        console.log('Round Number ',i+1)
-
-        getComputerChoice=comp_choice()
-        getHumanChoice = prompt(`Round ${i+1} / Choose between: paper, rock, scissors`)
-        winner = playround(getHumanChoice,getComputerChoice)
-
-        if (!(winner==="tie")){ 
-            winner==="human" ? humanScore+=1 : computerScore+=1}
-
-        console.log('human score: ',humanScore,' computer score: ',computerScore)
+/// a function that carries the results up until someone gets 5 points
+ function countScore(winner) {
+    if (winner != 'tie') {
+        (winner === 'human') ? humanScore += 1 : computerScore += 1
     }
 
-   let twinner='tie'
-    if (!(humanScore===computerScore)){ 
-        twinner= (humanScore>computerScore) ? "human" : "computer"
+    let hScore = document.querySelector('#hScore')
+    let cScore = document.querySelector('#cScore')
+    let round = document.querySelector('#round')
+    hScore.textContent = `Human Score: ${humanScore}`
+    cScore.textContent = `Computer Score: ${computerScore}`
+    roundNumber += 1
+    round.textContent = 'Round: '+roundNumber
+
+    if (humanScore === 5 || computerScore === 5) {
+        let logcontent = document.querySelector('#log')
+        moretext = 'Choose between rock, paper or scissors to play again'
+
+        if (humanScore === 5) {
+            logcontent.textContent = 'Human Wins the game! '+ moretext
+        }else {
+            logcontent.textContent = 'Computer Wins the game! '+moretext
+        }
+        
+        humanScore = 0
+        computerScore = 0
+        roundNumber = 0
     }
 
-    let w_message= !(twinner==="tie") ? `${twinner} wins the game`: "i`ts a tie"
-    console.log('The game has ended. ',w_message)
-}
 
 
-playgame()
+ }
+/// Get Buttons from html
 
+let btnsContainer = document.querySelector('#buttons')
+btnsContainer.style.margin = '10px'
 
+btnsContainer.addEventListener('click', (event) => {
+    let target = event.target 
+    switch (target.id) {
+        case 'rockBtn':
+            playround('rock')
+            break
+        case 'paperBtn':
+            playround('paper')
+            break
+        case 'scissorsBtn':
+            playround('scissors')
+            break
+    }
+})
 
